@@ -4,11 +4,14 @@ pragma solidity ^0.8.20;
 import {IDiamondCut} from "../interfaces/IDiamondCut.sol";
 import {LibDiamond} from "../libraries/LibDiamond.sol";
 
+// CarbonX Diamond Proxy
+// Implements EIP-2535 Diamond Standard for modular, upgradable contracts
+// Delegates calls to facets based on function selectors
 contract Diamond {
     constructor(address _contractOwner, address _diamondCutFacet) {
         LibDiamond.setContractOwner(_contractOwner);
 
-        // Add DiamondCutFacet to handle upgrades
+        // Initialize with DiamondCutFacet
         IDiamondCut.FacetCut[] memory cut = new IDiamondCut.FacetCut[](1);
         bytes4[] memory functionSelectors = new bytes4[](1);
         functionSelectors[0] = IDiamondCut.diamondCut.selector;
@@ -21,7 +24,8 @@ contract Diamond {
         LibDiamond.diamondCut(cut, address(0), "");
     }
 
-    // Delegate calls to facets
+    /// @notice Delegates function calls to appropriate facet
+    /// @dev Uses assembly for gas-efficient delegation
     fallback() external payable {
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         address facet = ds.selectorToFacetAndPosition[msg.sig].facetAddress;

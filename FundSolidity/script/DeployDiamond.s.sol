@@ -1,21 +1,25 @@
-// SPDX-License-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
 import {Script} from "forge-std/Script.sol";
 import {Diamond} from "../src/core/Diamond.sol";
+import {DiamondCutFacet} from "../src/facets/DiamondCutFacet.sol";
 import {FractionalizerFacet} from "../src/facets/FractionalizerFacet.sol";
 import {IDiamondCut} from "../src/interfaces/IDiamondCut.sol";
 
+/// @title DeployDiamond Script
+/// @notice Deploys the Diamond proxy and FractionalizerFacet
 contract DeployDiamond is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        // Deploy DiamondCutFacet (simplified; use louper/diamond-3 in production)
-        address diamondCutFacet = address(0); // Placeholder; replace with actual deployment
+        // Deploy DiamondCutFacet
+        DiamondCutFacet diamondCutFacet = new DiamondCutFacet();
+        console2.log("DiamondCutFacet deployed at:", address(diamondCutFacet));
 
         // Deploy Diamond
-        Diamond diamond = new Diamond(msg.sender, diamondCutFacet);
+        Diamond diamond = new Diamond(msg.sender, address(diamondCutFacet));
         console2.log("Diamond deployed at:", address(diamond));
 
         // Deploy FractionalizerFacet

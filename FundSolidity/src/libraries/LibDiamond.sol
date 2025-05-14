@@ -1,4 +1,4 @@
-// SPDX-License-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
 import {IDiamondCut} from "../interfaces/IDiamondCut.sol";
@@ -34,7 +34,22 @@ library LibDiamond {
     }
 
     function diamondCut(IDiamondCut.FacetCut[] memory _diamondCut, address _init, bytes memory _calldata) internal {
-        // Simplified for MVP; use louper/diamond-3 for full implementation
+        DiamondStorage storage ds = diamondStorage();
+        for (uint256 facetIndex; facetIndex < _diamondCut.length; facetIndex++) {
+            IDiamondCut.FacetAction action = _diamondCut[facetIndex].action;
+            require(action == IDiamondCut.FacetAction.Add, "LibDiamond: Only Add supported in MVP");
+
+            bytes4[] memory functionSelectors = _diamondCut[facetIndex].functionSelectors;
+            address facetAddress = _diamondCut[facetIndex].facetAddress;
+            require(facetAddress != address(0), "LibDiamond: Invalid facet address");
+
+            for (uint256 selectorIndex; selectorIndex < functionSelectors.length; selectorIndex++) {
+                bytes4 selector = functionSelectors[selectorIndex];
+                ds.selectorToFacetAndPosition[selector].facetAddress = facetAddress;
+                ds.facetFunctionSelectors[facetAddress][selector] = true;
+            }
+        }
+
         emit IDiamondCut.DiamondCut(_diamondCut, _init, _calldata);
     }
 }

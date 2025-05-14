@@ -4,3 +4,6 @@
 [submodule "FundSolidity/lib/openzeppelin-contracts"]
 	path = FundSolidity/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "FundSolidity/lib/diamond-3-hardhat"]
+	path = FundSolidity/lib/diamond-3-hardhat
+	url = https://github.com/mudgen/diamond-3-hardhat
