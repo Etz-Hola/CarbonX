@@ -1,15 +1,14 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.28;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
 
 import {IDiamondCut} from "../interfaces/IDiamondCut.sol";
-import {IDiamondLoupe} from "../interfaces/IDiamondLoupe.sol";
 import {LibDiamond} from "../libraries/LibDiamond.sol";
 
 contract Diamond {
     constructor(address _contractOwner, address _diamondCutFacet) {
         LibDiamond.setContractOwner(_contractOwner);
 
-        // Initial cut to add the DiamondCut facet
+        // Add DiamondCutFacet to handle upgrades
         IDiamondCut.FacetCut[] memory cut = new IDiamondCut.FacetCut[](1);
         bytes4[] memory functionSelectors = new bytes4[](1);
         functionSelectors[0] = IDiamondCut.diamondCut.selector;
@@ -22,7 +21,7 @@ contract Diamond {
         LibDiamond.diamondCut(cut, address(0), "");
     }
 
-    // Find facet for function that is called and execute it
+    // Delegate calls to facets
     fallback() external payable {
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         address facet = ds.selectorToFacetAndPosition[msg.sig].facetAddress;
@@ -33,14 +32,10 @@ contract Diamond {
             let result := delegatecall(gas(), facet, 0, calldatasize(), 0, 0)
             returndatacopy(0, 0, returndatasize())
             switch result
-            case 0 {
-                revert(0, returndatasize())
-            }
-            default {
-                return(0, returndatasize())
-            }
+            case 0 { revert(0, returndatasize()) }
+            default { return(0, returndatasize()) }
         }
     }
 
     receive() external payable {}
-}d
+}
