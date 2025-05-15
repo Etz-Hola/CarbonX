@@ -1,5 +1,5 @@
 import { createWeb3Modal } from '@web3modal/wagmi/react';
-import { defaultWagmiConfig } from '@wagmi/core';
+import { createConfig, http } from 'wagmi';
 import { mainnet, polygon, arbitrum, base } from 'wagmi/chains';
 
 // 1. Define wagmi config
@@ -7,14 +7,13 @@ export const projectId = 'YOUR_PROJECT_ID'; // Replace with your WalletConnect p
 
 export const chains = [mainnet, polygon, arbitrum, base];
 
-export const wagmiConfig = defaultWagmiConfig({
+export const wagmiConfig = createConfig({
   chains,
-  projectId,
-  metadata: {
-    name: 'CarbonX',
-    description: 'Fractionalized Carbon Credit Trading with Dynamic DeFi Incentives',
-    url: 'https://carbonx.io',
-    icons: ['https://carbonx.io/icon.png'],
+  transports: {
+    [mainnet.id]: http(),
+    [polygon.id]: http(),
+    [arbitrum.id]: http(),
+    [base.id]: http(),
   },
 });
 
