@@ -18,6 +18,7 @@ library LibDiamond {
     }
 
     function diamondStorage() internal pure returns (DiamondStorage storage ds) {
+        // Get diamond storage slot
         bytes32 position = DIAMOND_STORAGE_POSITION;
         assembly {
             ds.slot := position
@@ -25,28 +26,50 @@ library LibDiamond {
     }
 
     function setContractOwner(address _newOwner) internal {
+        // Set contract owner
         DiamondStorage storage ds = diamondStorage();
         ds.contractOwner = _newOwner;
     }
 
     function enforceIsContractOwner() internal view {
+        // Restrict to contract owner
         require(msg.sender == diamondStorage().contractOwner, "LibDiamond: Must be contract owner");
     }
 
     function diamondCut(IDiamondCut.FacetCut[] memory _diamondCut, address _init, bytes memory _calldata) internal {
+        // Update facet mappings
         DiamondStorage storage ds = diamondStorage();
         for (uint256 facetIndex; facetIndex < _diamondCut.length; facetIndex++) {
             IDiamondCut.FacetAction action = _diamondCut[facetIndex].action;
-            require(action == IDiamondCut.FacetAction.Add, "LibDiamond: Only Add supported in MVP");
-
             bytes4[] memory functionSelectors = _diamondCut[facetIndex].functionSelectors;
             address facetAddress = _diamondCut[facetIndex].facetAddress;
+
             require(facetAddress != address(0), "LibDiamond: Invalid facet address");
 
             for (uint256 selectorIndex; selectorIndex < functionSelectors.length; selectorIndex++) {
                 bytes4 selector = functionSelectors[selectorIndex];
-                ds.selectorToFacetAndPosition[selector].facetAddress = facetAddress;
-                ds.facetFunctionSelectors[facetAddress][selector] = true;
+                if (action == IDiamondCut.FacetAction.Add) {
+                    require(
+                        ds.selectorToFacetAndPosition[selector].facetAddress == address(0),
+                        "LibDiamond: Selector already exists"
+                    );
+                    ds.selectorToFacetAndPosition[selector].facetAddress = facetAddress;
+                    ds.facetFunctionSelectors[facetAddress][selector] = true;
+                } else if (action == IDiamondCut.FacetAction.Replace) {
+                    require(
+                        ds.selectorToFacetAndPosition[selector].facetAddress != address(0),
+                        "LibDiamond: Selector does not exist"
+                    );
+                    ds.selectorToFacetAndPosition[selector].facetAddress = facetAddress;
+                    ds.facetFunctionSelectors[facetAddress][selector] = true;
+                } else if (action == IDiamondCut.FacetAction.Remove) {
+                    require(
+                        ds.selectorToFacetAndPosition[selector].facetAddress != address(0),
+                        "LibDiamond: Selector does not exist"
+                    );
+                    ds.selectorToFacetAndPosition[selector].facetAddress = address(0);
+                    ds.facetFunctionSelectors[facetAddress][selector] = false;
+                }
             }
         }
 

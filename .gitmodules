@@ -7,3 +7,6 @@
 [submodule "FundSolidity/lib/diamond-3-hardhat"]
 	path = FundSolidity/lib/diamond-3-hardhat
 	url = https://github.com/mudgen/diamond-3-hardhat
+[submodule "FundSolidity/lib/chainlink"]
+	path = FundSolidity/lib/chainlink
+	url = https://github.com/smartcontractkit/chainlink

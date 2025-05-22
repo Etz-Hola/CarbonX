@@ -11,16 +11,33 @@ contract DiamondTest is Test {
     DiamondCutFacet diamondCutFacet;
 
     function setUp() public {
+        // Deploy contracts
         diamondCutFacet = new DiamondCutFacet();
         diamond = new Diamond(address(this), address(diamondCutFacet));
     }
 
     function testContractOwner() public {
+        // Verify contract owner
         assertEq(LibDiamond.diamondStorage().contractOwner, address(this));
     }
 
     function testFallbackRevertsForUnknownFunction() public {
+        // Ensure unknown function reverts
         (bool success, ) = address(diamond).call(abi.encodeWithSignature("unknownFunction()"));
         assertFalse(success);
+    }
+
+    function testPauseDiamondCut() public {
+        // Test pausing upgrades
+        DiamondCutFacet(address(diamond)).pause();
+        vm.expectRevert("Pausable: paused");
+        DiamondCutFacet(address(diamond)).diamondCut(new IDiamondCut.FacetCut[](0), address(0), "");
+    }
+
+    function testEmergencyPause() public {
+        // Test DAO emergency pause
+        DiamondCutFacet(address(diamond)).emergencyPause();
+        vm.expectRevert("Pausable: paused");
+        DiamondCutFacet(address(diamond)).diamondCut(new IDiamondCut.FacetCut[](0), address(0), "");
     }
 }
