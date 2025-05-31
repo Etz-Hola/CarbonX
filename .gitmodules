@@ -10,3 +10,6 @@
 [submodule "FundSolidity/lib/chainlink"]
 	path = FundSolidity/lib/chainlink
 	url = https://github.com/smartcontractkit/chainlink
+[submodule "FundSolidity/lib/chainlink-brownie-contracts"]
+	path = FundSolidity/lib/chainlink-brownie-contracts
+	url = https://github.com/smartcontractkit/chainlink-brownie-contracts

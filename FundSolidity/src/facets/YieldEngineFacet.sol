@@ -8,7 +8,7 @@ import {AppStorage} from "src/libraries/AppStorage.sol";
 
 contract YieldEngineFacet is AccessControl, Pausable {
     bytes32 public constant ORACLE_ROLE = keccak256("ORACLE_ROLE");
-    AppStorage internal s;
+    AppStorage internals;
 
     AggregatorV3Interface public dataFeed;
     uint256 public constant BASE_YIELD = 5e18; // 5% APY in wei
