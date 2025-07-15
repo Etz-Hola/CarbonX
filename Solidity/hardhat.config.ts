@@ -1,10 +1,12 @@
-require("@nomiclabs/hardhat-ethers");
-require("@louper/diamond-3-hardhat");
-require("dotenv").config();
+import { HardhatUserConfig } from "hardhat/config";
+import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-waffle";
+import "@typechain/hardhat";
+import "dotenv/config";
 
-module.exports = {
+const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.20",
+    version: "0.8.24",
     settings: {
       optimizer: {
         enabled: true,
@@ -13,14 +15,16 @@ module.exports = {
     },
   },
   networks: {
+    hardhat: {},
     arbitrumSepolia: {
-      url: "https://sepolia-rollup.arbitrum.io/rpc", // Arbitrum Sepolia testnet
-      accounts: [process.env.PRIVATE_KEY], // Add your private key in .env
+      url: process.env.ARBITRUM_SEPOLIA_URL || "https://sepolia-rollup.arbitrum.io/rpc",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },
   },
-  diamondAbi: {
-    name: "CarbonXDiamond",
-    include: ["Facet"],
-    exclude: [],
+  typechain: {
+    outDir: "typechain",
+    target: "ethers-v5",
   },
 };
+
+export default config;
