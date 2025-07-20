@@ -27,7 +27,7 @@ const Home: React.FC = () => {
           {/* <Link to="/">
             <Button size="lg">Connect Wallet</Button>
           </Link> */}
-        </div>
+        </div> 
       </div>
     );
   }
