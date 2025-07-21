@@ -1,7 +1,7 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { WagmiConfig, createConfig, configureChains, mainnet, arbitrum, sepolia } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { http } from 'wagmi';
+import { alchemy } from 'wagmi/connectors';
 import { RainbowKitProvider, getDefaultWallets, connectorsForWallets } from '@rainbow-me/rainbowkit';
 import { metaMaskWallet, coinbaseWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
 import '@rainbow-me/rainbowkit/styles.css';
@@ -9,8 +9,8 @@ import '@rainbow-me/rainbowkit/styles.css';
 const { chains, publicClient } = configureChains(
   [mainnet, arbitrum, sepolia],
   [
-    alchemyProvider({ apiKey: import.meta.env.VITE_ALCHEMY_API_KEY || '' }),
-    publicProvider()
+    alchemy({ apiKey: import.meta.env.VITE_ALCHEMY_API_KEY || '' }),
+    http()
   ]
 );
 
