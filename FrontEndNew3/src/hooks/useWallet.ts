@@ -34,10 +34,10 @@ export const useWallet = () => {
     }
   }, [isConnected, address, balance, setUser]);
 
-  const connectWallet = async (connectorId?: string) => {
+  const connectWallet = async (connectorUid?: string) => {
     try {
-      const connector = connectorId 
-        ? connectors.find(c => c.id === connectorId)
+      const connector = connectorUid 
+        ? connectors.find(c => c.uid === connectorUid)
         : connectors[0];
       
       if (connector) {

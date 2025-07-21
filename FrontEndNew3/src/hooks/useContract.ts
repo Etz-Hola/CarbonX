@@ -67,7 +67,7 @@ export const useContract = () => {
     args: [1], // Example token ID
   });
 
-  const { write: fractionalize, data: fractionalizeData } = useContractWrite({
+  const fractionalize = useContractWrite({
     address: CONTRACT_ADDRESSES.FRACTIONALIZER,
     abi: FRACTIONALIZER_ABI,
     functionName: 'fractionalize',
@@ -80,7 +80,7 @@ export const useContract = () => {
   });
 
   // Yield Engine contract functions
-  const { write: stake, data: stakeData } = useContractWrite({
+  const stake = useContractWrite({
     address: CONTRACT_ADDRESSES.YIELD_ENGINE,
     abi: YIELD_ENGINE_ABI,
     functionName: 'stake',
@@ -92,7 +92,7 @@ export const useContract = () => {
     },
   });
 
-  const { write: unstake, data: unstakeData } = useContractWrite({
+  const unstake = useContractWrite({
     address: CONTRACT_ADDRESSES.YIELD_ENGINE,
     abi: YIELD_ENGINE_ABI,
     functionName: 'unstake',
@@ -104,7 +104,7 @@ export const useContract = () => {
     },
   });
 
-  const { write: claimRewards, data: claimData } = useContractWrite({
+  const claimRewards = useContractWrite({
     address: CONTRACT_ADDRESSES.YIELD_ENGINE,
     abi: YIELD_ENGINE_ABI,
     functionName: 'claimRewards',
@@ -118,26 +118,26 @@ export const useContract = () => {
 
   // Transaction status hooks
   const { isLoading: fractionalizeLoading } = useWaitForTransaction({
-    hash: fractionalizeData?.hash,
+    hash: fractionalize.data?.hash,
   });
 
   const { isLoading: stakeLoading } = useWaitForTransaction({
-    hash: stakeData?.hash,
+    hash: stake.data?.hash,
   });
 
   const { isLoading: unstakeLoading } = useWaitForTransaction({
-    hash: unstakeData?.hash,
+    hash: unstake.data?.hash,
   });
 
   const { isLoading: claimLoading } = useWaitForTransaction({
-    hash: claimData?.hash,
+    hash: claimRewards.data?.hash,
   });
 
   // Helper functions
   const fractionalizeToken = async (tokenId: string, amount: number) => {
     setIsLoading(true);
     try {
-      await fractionalize({
+      await fractionalize.writeAsync({
         args: [BigInt(tokenId), BigInt(amount)]
       });
     } catch (error) {
@@ -150,7 +150,7 @@ export const useContract = () => {
   const stakeTokens = async (tokenId: string, amount: number, lockPeriod: number) => {
     setIsLoading(true);
     try {
-      await stake({
+      await stake.writeAsync({
         args: [BigInt(tokenId), BigInt(amount), BigInt(lockPeriod)]
       });
     } catch (error) {
@@ -163,7 +163,7 @@ export const useContract = () => {
   const unstakeTokens = async (positionId: string) => {
     setIsLoading(true);
     try {
-      await unstake({
+      await unstake.writeAsync({
         args: [BigInt(positionId)]
       });
     } catch (error) {
@@ -176,7 +176,7 @@ export const useContract = () => {
   const claimStakingRewards = async (positionId: string) => {
     setIsLoading(true);
     try {
-      await claimRewards({
+      await claimRewards.writeAsync({
         args: [BigInt(positionId)]
       });
     } catch (error) {

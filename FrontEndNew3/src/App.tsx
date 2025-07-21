@@ -1,51 +1,45 @@
 import React from 'react';
-import { WagmiConfig, createConfig, configureChains } from 'wagmi';
-import { arbitrum, mainnet, polygon } from 'wagmi/chains';
-import { publicProvider } from 'wagmi/providers/public';
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import { InjectedConnector } from 'wagmi/connectors/injected';
+import { WagmiConfig, createConfig, http } from 'wagmi';
+import { mainnet, arbitrum, polygon } from 'wagmi/chains';
+import { metaMask, walletConnect, injected } from 'wagmi/connectors';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { AppProvider } from './context/AppContext';
 import { AppRoutes } from './routes';
 import { Toast } from './components/ui/Toast';
 
-// Configure chains and providers
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [mainnet, arbitrum, polygon],
-  [publicProvider()]
-);
-
-// Configure connectors
-const connectors = [
-  new MetaMaskConnector({ chains }),
-  new WalletConnectConnector({
-    chains,
-    options: {
-      projectId: process.env.VITE_WALLETCONNECT_PROJECT_ID || 'default-project-id',
-    },
-  }),
-  new InjectedConnector({ chains }),
-];
-
-// Create wagmi config
+// Configure wagmi config for v1.x+
 const config = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient,
-  webSocketPublicClient,
+  chains: [mainnet, arbitrum, polygon],
+  transports: {
+    [mainnet.id]: http(),
+    [arbitrum.id]: http(),
+    [polygon.id]: http(),
+  },
+  connectors: [
+    metaMask(),
+    walletConnect({
+      projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || 'default-project-id',
+    }),
+    injected(),
+  ],
+  ssr: false,
 });
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <WagmiConfig config={config}>
-      <AppProvider>
-        <div className="App">
-          <AppRoutes />
-          <Toast />
-        </div>
-      </AppProvider>
-    </WagmiConfig>
+    <QueryClientProvider client={queryClient}>
+      <WagmiConfig config={config}>
+        <AppProvider>
+          <div className="App">
+            <AppRoutes />
+            <Toast />
+          </div>
+        </AppProvider>
+      </WagmiConfig>
+    </QueryClientProvider>
   );
 }
 
