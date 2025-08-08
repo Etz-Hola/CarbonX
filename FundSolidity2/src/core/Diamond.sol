@@ -37,8 +37,6 @@ contract Diamond {
             switch result
             case 0 { revert(0, returndatasize()) }
             default { return(0, returndatasize()) }
-            // case 0 { revert(0, returndatasize()) }
-            // default { return(0, returndatasize()) }
         }
     }
 
