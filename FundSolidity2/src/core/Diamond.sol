@@ -8,11 +8,13 @@ contract Diamond {
     constructor(address _contractOwner, address _diamondCutFacet) {
         // Set the contract owner
         LibDiamond.setContractOwner(_contractOwner);
+        // LibDiamond.setContractOwner(_contractOwner);
 
         // Initialize with DiamondCutFacet
         IDiamondCut.FacetCut[] memory cut = new IDiamondCut.FacetCut[](1);
         bytes4[] memory functionSelectors = new bytes4[](1);
         functionSelectors[0] = IDiamondCut.diamondCut.selector;
+        // functionSelectors[0] = IDiamondCut.diamondCut.selector;
         cut[0] = IDiamondCut.FacetCut({
             facetAddress: _diamondCutFacet,
             action: IDiamondCut.FacetAction.Add,
