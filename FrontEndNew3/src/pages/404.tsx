@@ -28,7 +28,7 @@ export const NotFound: React.FC = () => {
             </div>
             {/* <div className="mt-6">
               <h1 className="text-8xl font-bold text-emerald-600 mb-2">404</h1>
-              <div clas  /> */}
+              <div   /> */}
 
           </div>
 
