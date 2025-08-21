@@ -27,7 +27,7 @@ export const NotFound: React.FC = () => {
               <div className="w-24 h-1 bg-emerald-600 mx-auto rounded-full" />
             </div>
             {/* <div className="mt-6">
-              <h1 className="text-8xl-emerald-600 -2">404</h1>   /> */}
+              <h1 className="text-8xl-emerald-600 -2"></h1>   /> */}
 
           </div>
 
