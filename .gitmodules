@@ -4,3 +4,6 @@
 [submodule "FundSolidity2/lib/openzeppelin-contracts"]
 	path = FundSolidity2/lib/openzeppelin-contracts
 	url = https://github.com/openzeppelin/openzeppelin-contracts
+[submodule "FundSolidity2/lib/chainlink"]
+	path = FundSolidity2/lib/chainlink
+	url = https://github.com/smartcontractkit/chainlink
